@@ -46,12 +46,16 @@ while True:
          exit()
       if event.type == KEYDOWN:
          Mittens_image.update_position(event.key,SCREEN_SIZE)
-
-   #Keep Mittens moving if a key is held down.
+                             
+                         
+   #Keep Mittens moving if a key is held down. Otherwise decelerate her.
    keys = pygame.key.get_pressed()
-   for i in range(len(keys)): #Check which keys are pressed
-      if keys[i] != 0:
-         Mittens_image.update_position(i,SCREEN_SIZE)
+   if sum(keys) > 0:   #Some keys are pressed
+      for i in range(len(keys)): #Check which keys are pressed
+         if keys[i] != 0:
+            Mittens_image.update_position(i,SCREEN_SIZE)
+   else:
+      Mittens_image.update_position(KEYUP,SCREEN_SIZE)
 
    screen.blit(background,(0,0))
    screen.blit(Mittens_image.image,Mittens_image.pos)
