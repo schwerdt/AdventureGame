@@ -51,7 +51,7 @@ class image_class:
          self.vel[0] = 0.99*self.vel[0]
          self.vel[1] = 0.99*self.vel[1]
          #Check to make sure the image stays on the screen before updating pos
-         if (self.pos[0] > 0) and (self.pos[0] < screen_size[0] +self.size[0]) and (self.pos[1] > 0) and (self.pos[1] < screen_size[1] - self.size[1]):
+         if (self.pos[0] > 0) and (self.pos[0] < screen_size[0] -self.size[0]) and (self.pos[1] > 0) and (self.pos[1] < screen_size[1] - self.size[1]):
            self.pos[0] = self.pos[0] + self.vel[0]
            self.pos[1] = self.pos[1] + self.vel[1]
        
