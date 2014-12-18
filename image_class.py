@@ -1,5 +1,7 @@
 import pygame
 from pygame.locals import *
+import random
+import math
 
 class image_class:
    """A class to hold information about sprites"""
@@ -10,6 +12,7 @@ class image_class:
       self.pos = image_pos  #Should be x,y coordinates in a list, this is the center of the image
       self.vel = [0,0]  #Velocity of the image
       self.collided = False #This variable is True if a meeting/collision has occured with Mittens
+      self.circle_angle = 0
 
       self.image = pygame.image.load(filename).convert_alpha()
       self.size_tuple = self.image.get_size()
@@ -54,7 +57,65 @@ class image_class:
          if (self.pos[0] > 0) and (self.pos[0] < screen_size[0] -self.size[0]) and (self.pos[1] > 0) and (self.pos[1] < screen_size[1] - self.size[1]):
            self.pos[0] = self.pos[0] + self.vel[0]
            self.pos[1] = self.pos[1] + self.vel[1]
-       
+    
+
+   
    def update_collision_status(self,collision):
       self.collided = True
 
+
+
+   def update_position_random(self, screen_size):
+      """This function will move the image through the screen, without requiring key presses."""
+      #Use random numbers to generate the horizontal and vertical displacement
+      range_max = 2
+      vert_disp = random.randrange(0,range_max)
+      horiz_disp = random.randrange(0,range_max)
+      #Choose the direction of the displacement
+      sign = [-1,1]
+      vert_sign = random.choice(sign)
+      horiz_sign = random.choice(sign)
+
+     #Make sure the image remains on the screen
+      if (self.pos[0] > 0) and (self.pos[0] < screen_size[0] - self.size[0]) and (self.pos[1] > 0) and (self.pos[1] < screen_size[1] - self.size[1]):
+         self.pos[0] += horiz_disp*vert_sign
+         self.pos[1] += vert_disp*horiz_sign
+
+   def update_position_target(self,screen_size,target):
+      """This function will move the image through the screen towards an image."""
+      #target is an image_class object.  It also has coordinates
+      range_max = 2
+      find_new_target = False
+      #Find the vector along which the image should move toward the target.
+      direction_vector = [self.pos[0] - target.pos[0], self.pos[1] - target.pos[1]]
+      print 'this is the direction vector', direction_vector
+      #Turn image away from boundary.  Change logical so we can find a new target next iteration
+      if self.pos[0] < 0:
+         self.pos[0] += 10
+         find_new_target = True
+      if self.pos[0] > screen_size[0] - self.size[0]:
+         self.pos[0] -= 10
+         find_new_target = True
+      if self.pos[1] < 0:
+         self.pos[1] += 10 
+         find_new_target = True
+      if self.pos[1] > self.pos[1] - self.size[1]:
+         self.pos[1] -= 10
+         find_new_target = True
+      if not find_new_target:
+         self.pos[0] += direction_vector[0]*.001
+         self.pos[1] += direction_vector[1]*.001
+
+      return find_new_target
+
+
+   def update_position_circle(self,circle_center,radius):
+      """This routine will move the image in a circle around the gui."""
+      self.circle_angle += math.pi/500 #This is the new angle
+      #(x-x0) = radius*cos(theta)
+      #(y-y0) = radius*sin(theta)
+      #Compute the values of x and y, which are the image's position
+      #x0 and y0 are the coordinates in circle_center
+      self.pos[0] = circle_center[0] + radius*math.cos(self.circle_angle)
+      self.pos[1] = circle_center[1] + radius*math.sin(self.circle_angle)
+      print 'Sunny pos', self.pos[0], self.pos[1]
