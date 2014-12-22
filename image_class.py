@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 import math
+from check_for_collision import check_for_collision
 
 class image_class:
    """A class to hold information about sprites"""
@@ -84,27 +85,18 @@ class image_class:
    def update_position_target(self,screen_size,target):
       """This function will move the image through the screen towards an image."""
       #target is an image_class object.  It also has coordinates
-      range_max = 2
       find_new_target = False
       #Find the vector along which the image should move toward the target.
-      direction_vector = [self.pos[0] - target.pos[0], self.pos[1] - target.pos[1]]
-      print 'this is the direction vector', direction_vector
+      direction_vector = [target.pos[0] - self.pos[0], target.pos[1] - self.pos[1]]
       #Turn image away from boundary.  Change logical so we can find a new target next iteration
-      if self.pos[0] < 0:
-         self.pos[0] += 10
+      if (self.pos[0] < 0) or (self.pos[0] > screen_size[0] - self.size[0]) or (self.pos[1] < 0) and (self.pos[1] > screen_size[1] - self.size[1]):
          find_new_target = True
-      if self.pos[0] > screen_size[0] - self.size[0]:
-         self.pos[0] -= 10
-         find_new_target = True
-      if self.pos[1] < 0:
-         self.pos[1] += 10 
-         find_new_target = True
-      if self.pos[1] > self.pos[1] - self.size[1]:
-         self.pos[1] -= 10
-         find_new_target = True
-      if not find_new_target:
-         self.pos[0] += direction_vector[0]*.001
-         self.pos[1] += direction_vector[1]*.001
+      else:
+         self.pos[0] += direction_vector[0]*.005
+         self.pos[1] += direction_vector[1]*.005
+ 
+      #Check to see if there was a collision
+      find_new_target = check_for_collision(self,target)
 
       return find_new_target
 

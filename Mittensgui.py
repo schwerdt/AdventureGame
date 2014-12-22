@@ -4,6 +4,7 @@ from sys import exit
 import image_class
 from check_for_collision import check_for_collision
 import random
+import sys
 
 #Initialize pygame submodules (load drivers/query hardware, makes possible for
 #hardware to be used by pygame)
@@ -25,7 +26,7 @@ background = pygame.transform.scale(background,(int(2*background_size[0]),int(2*
 
 #Get picture of Mittens
 Mittens_image = image_class.image_class('Mittens.jpg',0.1,[100,100])
-Sunny_image = image_class.image_class('Sunny_Snow.png',0.7,[300,300])
+Sunny_image = image_class.image_class('Sunny_Snow.png',0.45,[300,300])
 
 #Create lists of flower and animal images
 flower_list = []
@@ -43,6 +44,7 @@ bluebird_image = image_class.image_class('bluebird.png',0.4,[700,100])
 animal_list.append(bunny_image)
 animal_list.append(bluebird_image)
 
+target_list = flower_list + animal_list
 
 while True:
    for event in pygame.event.get():
@@ -61,42 +63,37 @@ while True:
    else:
       Mittens_image.update_position(KEYUP,SCREEN_SIZE)
 
-   #Always update the position of the random movement sprite
-   #Sunny_image.update_position_random(SCREEN_SIZE)
+   #Update Sunny position randomly
+#  Sunny_image.update_position_random(SCREEN_SIZE)
+
+   #Update Sunny position by choosing a target image
    #randomly choose from flower list
-#  if find_new_target:
-#    target_flower = random.choice(flower_list)
-#    print 'finding a new target'
-#  find_new_target = Sunny_image.update_position_target(SCREEN_SIZE,target_flower)
-#  print 'after sunny update, find_new_target is', find_new_target
-   Sunny_image.update_position_circle([200,200],170)
+   if find_new_target:
+     current_target = random.choice(target_list)
+   find_new_target = Sunny_image.update_position_target(SCREEN_SIZE,current_target)
+
+   #Update Sunny position by having her run in circles
+   # Sunny_image.update_position_circle([58.578,58.578],450)
 
    screen.blit(background,(0,0))
    screen.blit(Mittens_image.image,Mittens_image.pos)
    screen.blit(Sunny_image.image,Sunny_image.pos)
-   for flower in flower_list:
-      screen.blit(flower.image,flower.pos)
-      #Check for collision with Mittens
-      if not flower.collided:
-         collision = check_for_collision(Mittens_image,flower)
-         if collision:
-            score += 1
-            flower.update_collision_status(collision)
-         #Check to see if Sunny collided with a flower, no points, but
-         #now Mittens won't be able to get points for this image
-         collision = check_for_collision(Sunny_image,flower)
 
-   for animal in animal_list:
-      screen.blit(animal.image,animal.pos)
+   #Check for collisions with Sunny and Mittens
+   for target_item in target_list:
+      screen.blit(target_item.image,target_item.pos)
       #Check for collision with Mittens
-      if not animal.collided:
-         collision = check_for_collision(Mittens_image,animal)
+      if not target_item.collided:
+         collision = check_for_collision(Mittens_image,target_item)
          if collision:
             score += 1
-            animal.update_collision_status(collision)
+            target_item.update_collision_status(collision)
          #Check to see if Sunny collided with a flower, no points, but
          #now Mittens won't be able to get points for this image
-         collision = check_for_collision(Sunny_image,flower)
+         else:
+            collision = check_for_collision(Sunny_image,target_item)
+            if collision:
+               target_item.update_collision_status(collision)
 
    #Display the score on the screen
    score_text = 'Score: ' + str(score)
@@ -104,7 +101,11 @@ while True:
    label = myfont.render(score_text,1,(255,255,0))
    screen.blit(label,(600,30))   
 
-   #Check for collisions
+   #Check to see if all items in target_list have had a collision
+   already_hit = [target_item.collided for target_item in target_list]
+   if sum(already_hit) == len(target_list):
+      print 'Game is over.  All targets have been smelled.'
+      sys.exit()
 
    pygame.display.update()
 
