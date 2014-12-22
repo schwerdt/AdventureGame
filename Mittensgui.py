@@ -30,8 +30,8 @@ Sunny_image = image_class.image_class('Sunny_Snow.png',0.45,[300,300])
 
 #Create lists of flower and animal images
 flower_list = []
-hyacinth_image = image_class.image_class('hyacinths.jpg',0.1,[200,200])
-lily_image = image_class.image_class('lilyplant.jpg',0.5,[500,500])
+hyacinth_image = image_class.image_class('hyacinths.png',0.1,[200,200])
+lily_image = image_class.image_class('lilyplant.png',0.5,[500,500])
 callalily_image = image_class.image_class('callalily.png',0.5,[700,200])
 #callalily_image.set_color_key((255,255,255))
 flower_list.append(hyacinth_image)
@@ -39,7 +39,7 @@ flower_list.append(lily_image)
 flower_list.append(callalily_image)
 
 animal_list = []
-bunny_image = image_class.image_class('babybunny.jpg',0.4,[200,600])
+bunny_image = image_class.image_class('babybunny.png',0.4,[200,600])
 bluebird_image = image_class.image_class('bluebird.png',0.4,[700,100])
 animal_list.append(bunny_image)
 animal_list.append(bluebird_image)
@@ -104,8 +104,10 @@ while True:
    #Check to see if all items in target_list have had a collision
    already_hit = [target_item.collided for target_item in target_list]
    if sum(already_hit) == len(target_list):
-      print 'Game is over.  All targets have been smelled.'
-      sys.exit()
+      end_label = myfont.render("Game over.",1,(255,255,0))
+      end_message = myfont.render("All targets have been smelled.",1,(255,255,0))
+      screen.blit(end_label,(300,200))
+      screen.blit(end_message,(100,300))
 
    pygame.display.update()
 
