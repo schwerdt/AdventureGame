@@ -5,6 +5,7 @@ import image_class
 from check_for_collision import check_for_collision
 import random
 import sys
+import math
 
 #Initialize pygame submodules (load drivers/query hardware, makes possible for
 #hardware to be used by pygame)
@@ -15,6 +16,10 @@ SCREEN_SIZE = (900,700)
 score = 0
 collision = False
 find_new_target = True  #determines whether the antogonist should find a new target. Set to false after target is chosen.
+new_circle = True #determines whether the antogonist should change the circle (radius/center) it is tracking
+
+#logical to choose motion
+move_in_circle = True
 #Create a display surface
 screen = pygame.display.set_mode(SCREEN_SIZE,0,32) #Returns a surface object (the window)
 pygame.display.set_caption("Grass Adventures")
@@ -33,7 +38,6 @@ flower_list = []
 hyacinth_image = image_class.image_class('hyacinths.png',0.1,[200,200])
 lily_image = image_class.image_class('lilyplant.png',0.5,[500,500])
 callalily_image = image_class.image_class('callalily.png',0.5,[700,200])
-#callalily_image.set_color_key((255,255,255))
 flower_list.append(hyacinth_image)
 flower_list.append(lily_image)
 flower_list.append(callalily_image)
@@ -68,12 +72,27 @@ while True:
 
    #Update Sunny position by choosing a target image
    #randomly choose from flower list
-   if find_new_target:
-     current_target = random.choice(target_list)
-   find_new_target = Sunny_image.update_position_target(SCREEN_SIZE,current_target)
-
+   if not move_in_circle:
+     if find_new_target:
+       current_target = random.choice(target_list)
+     find_new_target = Sunny_image.update_position_target(SCREEN_SIZE,current_target)
+   else:
    #Update Sunny position by having her run in circles
-   # Sunny_image.update_position_circle([58.578,58.578],450)
+      if new_circle:
+         while True:
+            circle_center = [random.randrange(100,600),random.randrange(100,600)]
+            x_component = Sunny_image.pos[0] - circle_center[0]
+            y_component = Sunny_image.pos[1] - circle_center[1]
+            radius = math.sqrt(x_component**2 + y_component**2)
+            #compute the angle associate with the current image position and the new center
+            theta = math.acos(x_component/radius) #Because radius computed with x_component, x_component must be smaller than radius (and there will be a valid theta)
+            print 'current angle and new angle', Sunny_image.circle_angle, theta
+            print 'new radius and center', radius, circle_center
+            Sunny_image.circle_angle = theta
+            Sunny_image.circle_angle_limit = theta + 2*math.pi
+            if radius < 300:
+               break
+      new_circle = Sunny_image.update_position_circle(circle_center,radius)
 
    screen.blit(background,(0,0))
    screen.blit(Mittens_image.image,Mittens_image.pos)
@@ -105,7 +124,7 @@ while True:
    already_hit = [target_item.collided for target_item in target_list]
    if sum(already_hit) == len(target_list):
       end_label = myfont.render("Game over.",1,(255,255,0))
-      end_message = myfont.render("All targets have been smelled.",1,(255,255,0))
+      end_message = myfont.render("All targets have been visited.",1,(255,255,0))
       screen.blit(end_label,(300,200))
       screen.blit(end_message,(100,300))
 

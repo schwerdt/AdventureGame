@@ -14,6 +14,7 @@ class image_class:
       self.vel = [0,0]  #Velocity of the image
       self.collided = False #This variable is True if a meeting/collision has occured with Mittens
       self.circle_angle = 0
+      self.circle_angle_limit = 0
 
       self.image = pygame.image.load(filename).convert_alpha()
       self.size_tuple = self.image.get_size()
@@ -108,6 +109,14 @@ class image_class:
       #(y-y0) = radius*sin(theta)
       #Compute the values of x and y, which are the image's position
       #x0 and y0 are the coordinates in circle_center
+      coord_save = self.pos[:]
       self.pos[0] = circle_center[0] + radius*math.cos(self.circle_angle)
       self.pos[1] = circle_center[1] + radius*math.sin(self.circle_angle)
-      print 'Sunny pos', self.pos[0], self.pos[1]
+      if abs(coord_save[0] - self.pos[0]) > 5 or (abs(coord_save[1] - self.pos[1]) > 5):
+         print 'large diff in coordinates'
+      if self.circle_angle >= self.circle_angle_limit:
+         print 'need to reset angle'
+         print 'current radius and angle', radius, self.circle_angle
+         return True
+      else:
+         return False
