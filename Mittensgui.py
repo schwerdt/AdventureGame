@@ -76,8 +76,7 @@ while True:
      if find_new_target:
        current_target = random.choice(target_list)
      find_new_target = Sunny_image.update_position_target(SCREEN_SIZE,current_target)
-   else:
-   #Update Sunny position by having her run in circles
+   else:    #Update Sunny position by having her run in circles 
       if new_circle:
          while True:
             circle_center = [random.randrange(100,600),random.randrange(100,600)]
@@ -85,9 +84,18 @@ while True:
             y_component = Sunny_image.pos[1] - circle_center[1]
             radius = math.sqrt(x_component**2 + y_component**2)
             #compute the angle associate with the current image position and the new center
-            theta = math.acos(x_component/radius) #Because radius computed with x_component, x_component must be smaller than radius (and there will be a valid theta)
-            print 'current angle and new angle', Sunny_image.circle_angle, theta
-            print 'new radius and center', radius, circle_center
+            #Because of the default quadrants for arccos and arcsin, we have to know ahead of time 
+            #which quadrant of the new circle the point is in
+            #Quadrants 1 and 2 (including axes)
+            if y_component >= 0.0:
+               theta = math.acos(x_component/radius)   
+            #Quadrant 4 
+            elif x_component >= 0.0 and y_component < 0.0:
+               theta = math.asin(y_component/radius) + 2*math.pi
+            elif x_component < 0.0 and y_component < 0.0:
+               theta = 2*math.pi - math.acos(x_component/radius) 
+            else: 
+               print 'There was a problem with determining the quadrant of the new circle where the current point is located.\n'
             Sunny_image.circle_angle = theta
             Sunny_image.circle_angle_limit = theta + 2*math.pi
             if radius < 300:

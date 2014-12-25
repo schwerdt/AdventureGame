@@ -115,8 +115,6 @@ class image_class:
       if abs(coord_save[0] - self.pos[0]) > 5 or (abs(coord_save[1] - self.pos[1]) > 5):
          print 'large diff in coordinates'
       if self.circle_angle >= self.circle_angle_limit:
-         print 'need to reset angle'
-         print 'current radius and angle', radius, self.circle_angle
          return True
       else:
          return False
