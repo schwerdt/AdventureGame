@@ -112,8 +112,8 @@ class image_class:
       coord_save = self.pos[:]
       self.pos[0] = circle_center[0] + radius*math.cos(self.circle_angle)
       self.pos[1] = circle_center[1] + radius*math.sin(self.circle_angle)
-      if abs(coord_save[0] - self.pos[0]) > 5 or (abs(coord_save[1] - self.pos[1]) > 5):
-         print 'large diff in coordinates'
+#     if abs(coord_save[0] - self.pos[0]) > 5 or (abs(coord_save[1] - self.pos[1]) > 5):
+#        print 'large diff in coordinates'
       if self.circle_angle >= self.circle_angle_limit:
          return True
       else:

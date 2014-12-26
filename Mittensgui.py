@@ -6,6 +6,9 @@ from check_for_collision import check_for_collision
 import random
 import sys
 import math
+from compute_angle_newcircle import compute_angle_newcircle
+from compute_radius import compute_radius
+import pygbutton
 
 #Initialize pygame submodules (load drivers/query hardware, makes possible for
 #hardware to be used by pygame)
@@ -19,7 +22,7 @@ find_new_target = True  #determines whether the antogonist should find a new tar
 new_circle = True #determines whether the antogonist should change the circle (radius/center) it is tracking
 
 #logical to choose motion
-move_in_circle = True
+move_in_circle = False
 #Create a display surface
 screen = pygame.display.set_mode(SCREEN_SIZE,0,32) #Returns a surface object (the window)
 pygame.display.set_caption("Grass Adventures")
@@ -50,12 +53,21 @@ animal_list.append(bluebird_image)
 
 target_list = flower_list + animal_list
 
+#Create a button to change between circular motion and targeted motion for Sunny
+button_object = pygbutton.PygButton((0,0,150,30),'Change Dog Motion')
+
 while True:
    for event in pygame.event.get():
       if event.type == QUIT:
          exit()
       if event.type == KEYDOWN:
          Mittens_image.update_position(event.key,SCREEN_SIZE)
+      if 'click' in button_object.handleEvent(event):
+         move_in_circle = not move_in_circle  #Change the variable True if False or False if True
+         score = 0
+         for target in target_list:
+            target.collided = False
+         
                              
                          
    #Keep Mittens moving if a key is held down. Otherwise decelerate her.
@@ -80,24 +92,9 @@ while True:
       if new_circle:
          while True:
             circle_center = [random.randrange(100,600),random.randrange(100,600)]
-            x_component = Sunny_image.pos[0] - circle_center[0]
-            y_component = Sunny_image.pos[1] - circle_center[1]
-            radius = math.sqrt(x_component**2 + y_component**2)
-            #compute the angle associate with the current image position and the new center
-            #Because of the default quadrants for arccos and arcsin, we have to know ahead of time 
-            #which quadrant of the new circle the point is in
-            #Quadrants 1 and 2 (including axes)
-            if y_component >= 0.0:
-               theta = math.acos(x_component/radius)   
-            #Quadrant 4 
-            elif x_component >= 0.0 and y_component < 0.0:
-               theta = math.asin(y_component/radius) + 2*math.pi
-            elif x_component < 0.0 and y_component < 0.0:
-               theta = 2*math.pi - math.acos(x_component/radius) 
-            else: 
-               print 'There was a problem with determining the quadrant of the new circle where the current point is located.\n'
-            Sunny_image.circle_angle = theta
-            Sunny_image.circle_angle_limit = theta + 2*math.pi
+            Sunny_image.circle_angle = compute_angle_newcircle(Sunny_image,circle_center)
+            Sunny_image.circle_angle_limit = Sunny_image.circle_angle + 2*math.pi
+            radius = compute_radius(Sunny_image,circle_center)
             if radius < 300:
                break
       new_circle = Sunny_image.update_position_circle(circle_center,radius)
@@ -136,6 +133,7 @@ while True:
       screen.blit(end_label,(300,200))
       screen.blit(end_message,(100,300))
 
+   button_object.draw(screen)
    pygame.display.update()
 
 
