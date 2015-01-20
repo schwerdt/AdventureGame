@@ -22,3 +22,17 @@ Note: If the center of the moving image passes inside another
 image's boundary, a collision has happened (and a point may 
 be gained).  Holding down arrow keys currently keeps the image 
 in motion until a boundary of the background is reached.
+
+To run the game, type the following command in your 
+terminal (from this directory):
+python Mittensgui.py
+
+There is a folder called JavascriptVersion, which contains the 
+version of the code that I rewrote in Javscript.  You can run it
+in your web browser by typing your path to the 
+JavascriptVersion/index.html file into your web browser.  It has 
+been tested in some versions of Chrome, Internet Explorer and 
+Safari.  It has some problems in Firefox that I have not yet resolved.  
+If you don't want to clone this repository but want to play the game, 
+you can do so at: GrassAdventures.github.io
+
