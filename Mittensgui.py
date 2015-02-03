@@ -33,7 +33,7 @@ background_size = background.get_size()
 background = pygame.transform.scale(background,(int(2*background_size[0]),int(2*background_size[1])))
 
 #Get picture of Mittens
-Mittens_image = image_class.image_class('Mittens.jpg',0.1,[100,100])
+Mittens_image = image_class.image_class('Mittens.png',0.1,[100,100])
 Sunny_image = image_class.image_class('Sunny_Snow.png',0.45,[300,300])
 
 #Create lists of flower and animal images
